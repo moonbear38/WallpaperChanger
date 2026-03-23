@@ -1,4 +1,4 @@
-Wallpaper Changer
+WallpaperChanger
 
 A simple wallpaper slideshow application for Windows.
 
