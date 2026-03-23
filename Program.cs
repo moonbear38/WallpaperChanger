@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
-using System.Linq;   // (OrderBy, SelectMany 用）
-using System.Collections.Generic; // (List 用）
+using System.Linq;
+using System.Collections.Generic;
 
 internal static class Program
 {
@@ -32,51 +32,42 @@ internal static class Program
     {
         ApplicationConfiguration.Initialize();
 
-        // 設定読み込み
         var config = LoadConfig();
         if (!Directory.Exists(config.folder))
             return;
 
-        // パス末尾の \ を除去
         config.folder = config.folder.TrimEnd('\\');
 
-        // interval の安全化
         int interval = Math.Max(1, config.interval);
 
-        // 画像読み込み（複数拡張子 + ソート）
         string[] images = LoadImages(config.folder);
         if (images.Length == 0)
             return;
 
-        // フォルダ監視
         FileSystemWatcher watcher = new FileSystemWatcher(config.folder);
         watcher.NotifyFilter = NotifyFilters.FileName;
         watcher.Created += (_, __) => images = LoadImages(config.folder);
         watcher.Deleted += (_, __) => images = LoadImages(config.folder);
         watcher.EnableRaisingEvents = true;
 
-        // タスクトレイアイコン
         tray = new NotifyIcon();
         tray.Icon = new Icon("icon.ico");
         tray.Visible = true;
         tray.Text = "WallpaperChanger.exe";
 
-        // 右クリックメニュー
         ContextMenuStrip menu = new ContextMenuStrip();
-        menu.Items.Add("終了", null, (s, e) =>
+        menu.Items.Add("Exit", null, (s, e) =>
         {
             tray.Visible = false;
             Application.Exit();
         });
         tray.ContextMenuStrip = menu;
 
-        // 壁紙変更スレッド
         Thread thread = new Thread(() =>
         {
             Random rand = new Random();
             int index = 0;
 
-            // シャッフルリスト
             List<string> shuffle = new List<string>();
 
             while (true)
@@ -85,7 +76,6 @@ internal static class Program
 
                 if (config.shuffle)
                 {
-                    // シャッフルリストが空なら新しく作る
                     if (shuffle.Count == 0)
                         shuffle = images.OrderBy(_ => rand.Next()).ToList();
 
@@ -94,7 +84,6 @@ internal static class Program
                 }
                 else
                 {
-                    // 画像が1枚しかない場合でも動く
                     if (images.Length == 1)
                         index = 0;
 
@@ -116,11 +105,9 @@ internal static class Program
         thread.IsBackground = true;
         thread.Start();
 
-        // メッセージループ開始
         Application.Run();
     }
 
-    // 画像読み込み（複数拡張子 + ソート）
     static string[] LoadImages(string folder)
     {
         return new[] { "*.jpg", "*.jpeg", "*.png", "*.bmp" }
