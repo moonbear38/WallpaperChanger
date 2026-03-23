@@ -1,0 +1,15 @@
+Changelog:
+
+All notable changes to this project will be documented in this file.
+
+[1.0.0] - 2025-03-23
+
+Added:
+
+- Initial release
+- System tray application
+- Automatically changes wallpapers from a specified folder
+- Detects and applies changes when images are added or removed
+- Shuffle order option
+- Settings managed via config.json
+- Windows 10 / Windows 11 support
