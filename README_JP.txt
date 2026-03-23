@@ -1,4 +1,4 @@
-Wallpaper Changer
+WallpaperChanger
 
 シンプルな Windows 用壁紙スライドショーアプリです。
 
